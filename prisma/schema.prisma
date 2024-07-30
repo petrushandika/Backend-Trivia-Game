@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  avatar   Avatar[]
+  answers  Answer[]
+  rankings Ranking[]
+}
+
+model Avatar {
+  id        Int     @id @default(autoincrement())
+  price     Int
+  isPremium Boolean @default(false)
+  User      User?   @relation(fields: [userId], references: [id])
+  userId    Int?
+}
+
+model Question {
+  id          Int     @id @default(autoincrement())
+  image       String?
+  content     String
+  description String?
+
+  answers Answer[]
+  Ranking Ranking[]
+}
+
+model Answer {
+  id          Int     @id @default(autoincrement())
+  description String
+  isCorrect   Boolean
+  userId      Int
+  questionId  Int
+
+  user     User     @relation(fields: [userId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+}
+
+model Ranking {
+  id         Int     @id @default(autoincrement())
+  isWinner   Boolean
+  isLooser   Boolean
+  userId     Int
+  questionId Int
+
+  user     User     @relation(fields: [userId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+}
