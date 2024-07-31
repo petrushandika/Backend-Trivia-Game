@@ -7,6 +7,7 @@ import { MatchModule } from './match/match.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { GoogleModule } from './google/google.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { GoogleModule } from './google/google.module';
     GoogleModule,
     MatchModule,
     AvatarModule,
+    SocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
