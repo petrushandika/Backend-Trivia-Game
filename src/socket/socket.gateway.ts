@@ -14,13 +14,37 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private rooms: Map<string, string[]> = new Map();
 
+  private getAvailableRoomId(): string | null {
+    for (const [roomId, clients] of this.rooms.entries()) {
+      if (clients.length < 5) {
+        return roomId;
+      }
+    }
+    return null;
+  }
+
+  private leaveRoom(client: Socket): void {
+    for (const [roomId, clients] of this.rooms.entries()) {
+      const index = clients.indexOf(client.id);
+      if (index !== -1) {
+        clients.splice(index, 1);
+        client.leave(roomId);
+        this.server.to(roomId).emit('userLeft', client.id);
+        if (clients.length === 0) {
+          this.rooms.delete(roomId);
+        }
+        break;
+      }
+    }
+  }
+
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
-    this.leaveAllRooms(client);
+    this.leaveRoom(client);
   }
 
   @SubscribeMessage('findMatch')
@@ -44,30 +68,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('leaveRoom')
   handleLeaveRoom(client: Socket): void {
-    this.leaveAllRooms(client);
-  }
-
-  private getAvailableRoomId(): string | null {
-    for (const [roomId, clients] of this.rooms.entries()) {
-      if (clients.length < 5) {
-        return roomId;
-      }
-    }
-    return null;
-  }
-
-  private leaveAllRooms(client: Socket): void {
-    for (const [roomId, clients] of this.rooms.entries()) {
-      const index = clients.indexOf(client.id);
-      if (index !== -1) {
-        clients.splice(index, 1);
-        client.leave(roomId);
-        this.server.to(roomId).emit('userLeft', client.id);
-        if (clients.length === 0) {
-          this.rooms.delete(roomId);
-        }
-        break;
-      }
-    }
+    this.leaveRoom(client);
   }
 }

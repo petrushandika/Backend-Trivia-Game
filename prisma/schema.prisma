@@ -9,11 +9,10 @@ generator client {
 
 model User {
   id       Int     @id @default(autoincrement())
-  name     String
   username String  @unique
   email    String  @unique
   password String?
-  googleId Int
+  googleId String
   diamond  Int
 
   createdAt DateTime @default(now())
