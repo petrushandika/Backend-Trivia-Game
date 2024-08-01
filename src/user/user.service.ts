@@ -20,12 +20,27 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.prismaService.user.findMany();
+    return await this.prismaService.user.findMany({
+      include: {
+        userAvatar: {
+          include: {
+            avatar: true,
+          },
+        },
+      },
+    });
   }
 
   async findOne(id: number) {
     return await this.prismaService.user.findUnique({
       where: { id },
+      include: {
+        userAvatar: {
+          include: {
+            avatar: true,
+          },
+        },
+      },
     });
   }
 
