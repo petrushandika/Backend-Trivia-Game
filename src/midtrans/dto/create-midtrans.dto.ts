@@ -10,6 +10,9 @@ class TransactionDetailDto {
 }
 
 class ItemDetailDto {
+  @IsString()
+  name: string;
+
   @IsNumber()
   price: number;
 

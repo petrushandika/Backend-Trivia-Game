@@ -36,6 +36,7 @@ model DiamondPurchase {
 
 model DiamondPackage {
   id        Int      @id @default(autoincrement())
+  name      String?
   price     Int
   quantity  Int
   createdAt DateTime @default(now())
