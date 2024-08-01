@@ -1,9 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class AuthService {
+  constructor(private jwtService: JwtService) {}
+
+  generateJwtToken(user: User) {
+    const payload = { sub: user.id, email: user.email };
+
+    return this.jwtService.sign(payload);
+  }
   create(createAuthDto: CreateAuthDto) {
     return 'This action adds a new auth';
   }

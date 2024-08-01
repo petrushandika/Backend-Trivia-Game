@@ -36,24 +36,27 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     return;
   }
 
-  const UserData: Prisma.UserCreateInput = {
+  const UserData = {
     email : emails[0].value,
     googleId : profile.id,
     username : null,
     diamond : 0,
+    accessToken
   }
 
   try {
     // Buat entri pengguna baru atau update jika sudah ada
     const user = await this.prisma.user.upsert({
       where: { email: emails[0].value },
-      update: UserData,
-      create: UserData
+      update: {email : UserData.email, googleId : UserData.googleId},
+      create: {email : UserData.email, googleId : UserData.googleId, diamond : UserData.diamond, username : UserData.username}
+
     });
 
-    done(null, user);
+    done(null, UserData);
   } catch (error) {
     done(error, null);
   }
-}
+  }
+
 }
