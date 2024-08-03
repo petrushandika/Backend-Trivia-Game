@@ -22,7 +22,7 @@ export class DiamondPackageService {
   }
 
   async findOne(id: number) {
-    return await this.prismaService.diamondPackage.findUnique({
+    return await this.prismaService.diamondPackage.findFirst({
       where: {
         id,
       },

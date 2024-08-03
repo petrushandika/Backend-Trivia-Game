@@ -19,7 +19,7 @@ export class DiamondPackageController {
 
   @Get(':id')
   findOne(@Param('id') id: number) {
-    return this.diamondPackageService.findOne(id);
+    return this.diamondPackageService.findOne(+id);
   }
 
   @Patch(':id')
