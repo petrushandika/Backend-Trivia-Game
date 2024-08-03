@@ -10,6 +10,8 @@ import { AvatarModule } from './avatar/avatar.module';
 import { MidtransModule } from './midtrans/midtrans.module';
 import { DiamondPackageModule } from './diamond-package/diamond-package.module';
 import { DiamondPurchaseModule } from './diamond-purchase/diamond-purchase.module';
+import { QuestionModule } from './question/question.module';
+import { AnswerModule } from './answer/answer.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { DiamondPurchaseModule } from './diamond-purchase/diamond-purchase.modul
     MidtransModule,
     DiamondPackageModule,
     DiamondPurchaseModule,
+    QuestionModule,
+    AnswerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

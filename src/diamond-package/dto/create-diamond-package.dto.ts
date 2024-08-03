@@ -1,20 +1,27 @@
-import { IsInt } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateDiamondPackageDto {
-  @IsInt()
+  @IsString()
+  @IsOptional()
+  name: string;
+
+  @IsString()
+  image: string;
+
+  @IsNumber()
   price: number;
 
-  @IsInt()
+  @IsNumber()
   quantity: number;
 
-  @IsInt()
+  @IsNumber()
   userId: number;
 }
 
 export class UpdateDiamondPackageDto {
-  @IsInt()
+  @IsNumber()
   price?: number;
 
-  @IsInt()
+  @IsNumber()
   quantity?: number;
 }
