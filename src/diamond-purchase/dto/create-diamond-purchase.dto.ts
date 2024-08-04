@@ -1,11 +1,9 @@
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsNumber } from 'class-validator';
 
 export class CreateDiamondPurchaseDto {
-  @IsInt()
-  @IsNotEmpty()
+  @IsNumber()
   userId: number;
 
-  @IsInt()
-  @IsNotEmpty()
+  @IsNumber()
   diamondPackageId: number;
 }

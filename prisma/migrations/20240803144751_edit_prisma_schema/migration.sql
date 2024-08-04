@@ -25,6 +25,8 @@ CREATE TABLE "DiamondPurchase" (
 -- CreateTable
 CREATE TABLE "DiamondPackage" (
     "id" SERIAL NOT NULL,
+    "name" TEXT,
+    "image" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
