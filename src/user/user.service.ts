@@ -45,11 +45,15 @@ export class UserService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    return await this.prismaService.user.update({
+    return await this.prismaService.user.updateMany({
       where: { id },
-      data: updateUserDto,
+      data: {
+        ...updateUserDto,
+      },
     });
   }
+
+  async updateUser (id:number, up)
 
   async remove(id: number) {
     return await this.prismaService.user.delete({
