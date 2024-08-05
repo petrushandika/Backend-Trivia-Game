@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMidtranDto } from './dto/create-midtrans.dto';
+import { ItemDetailDto } from './dto/create-payment.dto';
 import { Midtrans } from '@miwone/midtrans-client-typescript';
 import CONFIG from 'src/config/config';
 
 @Injectable()
-export class MidtransService {
-  async create(createMidtranDto: CreateMidtranDto) {
+export class PaymentService {
+  async create(itemDetailDto: ItemDetailDto) {
     const snap = new Midtrans.Snap({
       clientKey: CONFIG.MIDTRANS_CLIENT_KEY,
       serverKey: CONFIG.MIDTRANS_SERVER_KEY,
@@ -13,7 +13,17 @@ export class MidtransService {
     });
 
     const midtransParameter = {
-      ...createMidtranDto,
+      transaction_details: {
+        order_id: Date.now(),
+        gross_amount: itemDetailDto.price,
+      },
+      item_details: [
+        {
+          name: 'Diamond Pack',
+          price: itemDetailDto.price,
+          quantity: 1,
+        },
+      ],
       credit_card: {
         secure: true,
       },

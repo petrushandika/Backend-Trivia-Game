@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { SocketGateway } from './socket.gateway';
+import { SocketService } from './socket.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
-  providers: [SocketGateway],
+  providers: [SocketGateway, SocketService, PrismaService],
 })
 export class SocketModule {}

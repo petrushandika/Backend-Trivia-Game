@@ -10,11 +10,7 @@ export class UserService {
   async create(createUserDto: CreateUserDto) {
     return await this.prismaService.user.create({
       data: {
-        username: createUserDto.username,
-        email: createUserDto.email,
-        password: createUserDto.password,
-        googleId: createUserDto.googleId,
-        diamond: createUserDto.diamond,
+        ...createUserDto,
       },
     });
   }
