@@ -10,7 +10,7 @@ export class AvatarService {
 
   async findOne(id: number) {
     return await this.prismaService.avatar.findUnique({
-      where: { id },
+      where: { id : 1 },
     });
   }
 }
