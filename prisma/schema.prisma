@@ -13,27 +13,50 @@ model User {
   email    String  @unique
   password String?
   googleId String
-  diamond  Int
+  diamond  Int     @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  invoice      Invoice[]
-  userAvatar   UserAvatar[]
-  userAnswer   UserAnswer[]
-  usersMatches UserMatches[]
+  invoice         Invoice[]
+  userAvatar      UserAvatar[]
+  userAnswer      UserAnswer[]
+  usersMatches    UserMatches[]
+  diamondPurchase DiamondPurchase[]
+}
+
+model DiamondPurchase {
+  id               Int            @id @default(autoincrement())
+  userId           Int
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diamondPackageId Int
+  diamondPackage   DiamondPackage @relation(fields: [diamondPackageId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+}
+
+model DiamondPackage {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  image     String
+  price     Int
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  invoices        Invoice[]
+  DiamondPurchase DiamondPurchase[]
 }
 
 model Invoice {
-  id     Int    @id @default(autoincrement())
-  status String
-  amount Int
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  id               Int            @id @default(autoincrement())
+  status           String
+  amount           Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  userId           Int
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diamondPackageId Int
+  diamondPackage   DiamondPackage @relation(fields: [diamondPackageId], references: [id], onDelete: Cascade)
 }
 
 model Avatar {
@@ -47,15 +70,14 @@ model Avatar {
 }
 
 model UserAvatar {
-  id Int @id @default(autoincrement())
-
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   userId   Int
-  user     User   @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   avatarId Int
-  avatar   Avatar @relation(fields: [avatarId], references: [id])
+  avatar   Avatar @relation(fields: [avatarId], references: [id], onDelete: Cascade)
 }
 
 model Match {
@@ -75,12 +97,12 @@ model UserMatches {
   ranking Int
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   userId  Int
-  user    User  @relation(fields: [userId], references: [id])
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   matchId Int
-  match   Match @relation(fields: [matchId], references: [id])
+  match   Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
 }
 
 model Question {
@@ -90,7 +112,7 @@ model Question {
   timer    Int
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   answer    Answer[]
 }
 
@@ -99,7 +121,7 @@ model Answer {
   content   String
   isCorrect Boolean
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   questionId Int
   question   Question     @relation(fields: [questionId], references: [id])
@@ -112,9 +134,10 @@ model UserAnswer {
   score      Int      @default(1000)
   answerTime Int      @default(30)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
-  userId     Int
-  answerId   Int
-  user       User     @relation(fields: [userId], references: [id])
-  answer     Answer   @relation(fields: [answerId], references: [id])
+  updatedAt  DateTime @updatedAt
+
+  userId   Int
+  answerId Int
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answer   Answer @relation(fields: [answerId], references: [id])
 }
