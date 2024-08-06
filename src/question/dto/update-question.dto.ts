@@ -29,6 +29,4 @@ export class UpdateQuestionDto {
   readonly answers?: UpdateAnswerDto[];
 }
 
-import {PartialType} from "@nestjs/mapped-types";
-import { CreateQuestionDto } from './create-question.dto';
 

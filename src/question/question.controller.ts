@@ -35,8 +35,8 @@ export class QuestionsController {
   }
 
   @Post(':id/answers')
-  createAnswer(@Param('id') questionId: number, @Body() createAnswerDto: CreateAnswerDto) {
-    return this.questionsService.createAnswer(questionId, createAnswerDto);
+  createAnswer(@Param('id') questionId: string, @Body() createAnswerDto: CreateAnswerDto) {
+    return this.questionsService.createAnswer(+questionId, createAnswerDto);
   }
 
   @Patch('answers/:id')

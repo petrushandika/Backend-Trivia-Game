@@ -39,7 +39,6 @@ export class QuestionsService {
     if (!question) {
       throw new NotFoundException(`Question with ID ${id} not found`);
     }
-    return question;
   }
 
   async update(id: number, updateQuestionDto: UpdateQuestionDto) {
