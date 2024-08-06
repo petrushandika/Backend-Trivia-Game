@@ -122,14 +122,14 @@ async function main() {
     {
       id: 5,
       image:
-        'https://res.cloudinary.com/dv8vfur0m/image/upload/v1722826432/d8-removebg-preview_relfdo.png',
+        'https://res.cloudinary.com/dv8vfur0m/image/upload/v1722826432/d7-removebg-preview_idhc1f.png',
       price: 250000,
       quantity: 500,
     },
     {
       id: 6,
       image:
-        'https://res.cloudinary.com/dv8vfur0m/image/upload/v1722826432/d7-removebg-preview_idhc1f.png',
+        'https://res.cloudinary.com/dv8vfur0m/image/upload/v1722826432/d8-removebg-preview_relfdo.png',
       price: 516000,
       quantity: 10000,
     },
