@@ -53,6 +53,7 @@ CREATE TABLE "Avatar" (
     "id" SERIAL NOT NULL,
     "image" TEXT NOT NULL,
     "isPremium" BOOLEAN NOT NULL,
+    "diamond" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
