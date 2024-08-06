@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Request } from 'express';
 
 config();
 
@@ -15,17 +15,25 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
       callbackURL:
-        'https://8192-2404-8000-1005-37ac-ce3-c8b-4107-96d1.ngrok-free.app/google/redirect',
+        'https://789b-2404-8000-1005-37ac-89f4-7b8-b968-f52f.ngrok-free.app/google/redirect',
       scope: ['email', 'profile'],
+      passReqToCallback: true,
     });
   }
 
   async validate(
+    request: Request,
     accessToken: string,
     refreshToken: string,
     profile: Profile,
     done: VerifyCallback,
   ): Promise<any> {
+    const state: { redirectTo: string } = JSON.parse(
+      (request.query.state as string) ?? '{}',
+    );
+
+    request['googleState'] = {};
+    request['googleState']['redirectTo'] = state.redirectTo;
     const { name, emails, photos } = profile;
 
     // Periksa apakah semua properti yang diperlukan ada
@@ -33,23 +41,30 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       done(new Error('Google did not return an email'), null);
       return;
     }
-
-    const UserData: Prisma.UserCreateInput = {
+    console.log('prof', profile);
+    const UserData = {
       email: emails[0].value,
       googleId: profile.id,
       username: null,
       diamond: 0,
+      accessToken,
     };
 
     try {
       // Buat entri pengguna baru atau update jika sudah ada
       const user = await this.prisma.user.upsert({
         where: { email: emails[0].value },
-        update: UserData,
-        create: UserData,
+        update: { email: UserData.email, googleId: UserData.googleId },
+        create: {
+          email: UserData.email,
+          googleId: UserData.googleId,
+          diamond: UserData.diamond,
+          username: UserData.username,
+        },
       });
 
-      done(null, user);
+      done(null, UserData);
+      return user;
     } catch (error) {
       done(error, null);
     }

@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -20,6 +22,73 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @Post('buy-avatar/:id')
+  async buyAvatar(@Param('id') avatarId: number, @Res() res: Response) {
+    try {
+      const user = res.locals.user;
+      const updatedUser = await this.userService.buyAvatar(user.id, +avatarId);
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error('Error buy avatar:', error);
+      return res.status(error.status || 500).json({ message: error.message });
+    }
+  }
+
+  @Post('update-user/:id')
+  async updateUser(
+    @Body() body: { username: string },
+    @Res() res: Response,
+    @Param('id') avatarId: number,
+  ) {
+    try {
+      const user = res.locals.user;
+      if (!user) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+
+      const updatedUser = await this.userService.updateUser(
+        user.id,
+        body.username,
+        +avatarId,
+      );
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('user-avatar/:id')
+  async createUserAvatar(@Res() res: Response, @Param('id') avatarId: number) {
+    try {
+      const user = res.locals.user;
+      const userAvatar = await this.userService.createUserAvatar(
+        user.id,
+        +avatarId,
+      );
+      return res.status(200).json(userAvatar);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get('getUser')
+  async getUser(@Res() res: Response) {
+    try {
+      const user = res.locals.user;
+      console.log('test', user);
+      const getUser = await this.userService.findOne(user.id);
+      console.log(user, getUser);
+      return res.status(200).json(getUser);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get('check')
+  check(@Res() res: Response) {
+    const user = res.locals.user;
+    return res.json(user);
+  }
   @Get()
   findAll() {
     return this.userService.findAll();
