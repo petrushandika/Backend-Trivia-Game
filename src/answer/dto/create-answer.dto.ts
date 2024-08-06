@@ -1,12 +1,13 @@
-import { IsString, IsBoolean, IsNumber } from 'class-validator';
+import { IsString, IsBoolean, IsInt } from 'class-validator';
 
 export class CreateAnswerDto {
+
   @IsString()
-  content: string;
+  readonly content: string;
 
   @IsBoolean()
-  isCorrect: boolean;
+  readonly isCorrect: boolean;
 
-  @IsNumber()
-  questionId: number;
+  @IsInt()
+  readonly questionId: number;
 }

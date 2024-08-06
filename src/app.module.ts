@@ -8,7 +8,7 @@ import { SocketModule } from './socket/socket.module';
 import { AvatarModule } from './avatar/avatar.module';
 import { DiamondPackageModule } from './diamond-package/diamond-package.module';
 import { DiamondPurchaseModule } from './diamond-purchase/diamond-purchase.module';
-import { QuestionModule } from './question/question.module';
+import { QuestionsModule } from './question/question.module';
 import { AnswerModule } from './answer/answer.module';
 import { PaymentModule } from './payment/payment.module';
 
@@ -21,7 +21,7 @@ import { PaymentModule } from './payment/payment.module';
     AvatarModule,
     DiamondPackageModule,
     DiamondPurchaseModule,
-    QuestionModule,
+    QuestionsModule,
     AnswerModule,
     PaymentModule,
   ],
