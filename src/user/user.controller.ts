@@ -75,7 +75,6 @@ export class UserController {
   async getUser(@Res() res: Response) {
     try {
       const user = res.locals.user;
-      console.log('test', user);
       const getUser = await this.userService.findOne(user.id);
       console.log(user, getUser);
       return res.status(200).json(getUser);

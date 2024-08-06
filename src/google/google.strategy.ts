@@ -41,7 +41,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       done(new Error('Google did not return an email'), null);
       return;
     }
-    console.log('prof', profile);
+
     const UserData = {
       email: emails[0].value,
       googleId: profile.id,
