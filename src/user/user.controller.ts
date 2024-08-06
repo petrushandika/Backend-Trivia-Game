@@ -23,16 +23,10 @@ export class UserController {
   }
 
   @Post('buy-avatar/:id')
-  async buyAvatar(
-    @Param('id') avatarId: number,
-    @Res() res: Response,
-  ) {
+  async buyAvatar(@Param('id') avatarId: number, @Res() res: Response) {
     try {
       const user = res.locals.user;
-      const updatedUser = await this.userService.buyAvatar(
-        user.id,
-        +avatarId,
-      );
+      const updatedUser = await this.userService.buyAvatar(user.id, +avatarId);
       return res.status(200).json(updatedUser);
     } catch (error) {
       console.error('Error buy avatar:', error);
