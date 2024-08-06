@@ -2,10 +2,10 @@ import {
   Controller,
   Post,
   Body,
-  Req,
   Res,
   HttpStatus,
   HttpException,
+  Req,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { PaymentService } from './payment.service';
@@ -28,20 +28,17 @@ export class PaymentController {
     }
   }
 
-  // @Post('notification')
-  // async handleNotification(
-  //   @Body() paymentDto: PaymentDto,
-  //   @Req() req: Request,
-  //   @Res() res: Response,
-  // ) {
-  //   try {
-  //     const status = await this.paymentService.handleNotification(req.body);
-  //     res.status(HttpStatus.OK).json({ status });
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       'Failed to handle notification',
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
+  @Post('finish')
+  async finish(@Req() req: Request, @Res() res: Response) {
+    try {
+      const finishData = req.body;
+      const status = await this.paymentService.handleFinish(finishData);
+      res.status(HttpStatus.OK).json(status);
+    } catch (error) {
+      res.status(HttpStatus.BAD_REQUEST).json({
+        message: 'Failed to process finish',
+        error: error.message,
+      });
+    }
+  }
 }
