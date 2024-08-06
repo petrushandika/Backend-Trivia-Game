@@ -19,7 +19,7 @@ export class AvatarController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.avatarService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.avatarService.findOne(id);
   }
 }

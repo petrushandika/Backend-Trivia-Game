@@ -1,12 +1,18 @@
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsInt, IsArray, ValidateNested, IsOptional } from 'class-validator';
+import { CreateAnswerDto } from '../../answer/dto/create-answer.dto';
 
 export class CreateQuestionDto {
   @IsString()
-  content: string;
+  readonly content: string;
 
-  @IsNumber()
-  maxScore: number;
+  @IsInt()
+  readonly maxScore: number;
 
-  @IsNumber()
-  timer: number;
+  @IsInt()
+  readonly timer: number;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  readonly answers?: CreateAnswerDto[];
 }
