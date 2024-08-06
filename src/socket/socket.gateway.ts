@@ -6,37 +6,14 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { SocketService } from './socket.service';
 
 @WebSocketGateway()
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  private rooms: Map<string, string[]> = new Map();
-
-  private getAvailableRoomId(): string | null {
-    for (const [roomId, clients] of this.rooms.entries()) {
-      if (clients.length < 5) {
-        return roomId;
-      }
-    }
-    return null;
-  }
-
-  private leaveRoom(client: Socket): void {
-    for (const [roomId, clients] of this.rooms.entries()) {
-      const index = clients.indexOf(client.id);
-      if (index !== -1) {
-        clients.splice(index, 1);
-        client.leave(roomId);
-        this.server.to(roomId).emit('userLeft', client.id);
-        if (clients.length === 0) {
-          this.rooms.delete(roomId);
-        }
-        break;
-      }
-    }
-  }
+  constructor(private SocketService: SocketService) {}
 
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
@@ -44,30 +21,17 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
-    this.leaveRoom(client);
+    this.SocketService.leaveRoom(client);
   }
 
-  @SubscribeMessage('findMatch')
-  handleFindMatch(client: Socket): void {
-    let roomId = this.getAvailableRoomId();
-
-    if (!roomId) {
-      roomId = client.id;
-      this.rooms.set(roomId, []);
-    }
-
-    client.join(roomId);
-    this.rooms.get(roomId).push(client.id);
-
-    this.server.to(roomId).emit('matchFound', { roomId, userId: client.id });
-
-    if (this.rooms.get(roomId).length === 5) {
-      this.server.to(roomId).emit('roomFull', roomId);
-    }
+  @SubscribeMessage('joinQueue')
+  handleJoinQueue(client: Socket): void {
+    this.SocketService.addToQueue(client.id);
+    this.SocketService.processQueue(this.server);
   }
 
   @SubscribeMessage('leaveRoom')
   handleLeaveRoom(client: Socket): void {
-    this.leaveRoom(client);
+    this.SocketService.leaveRoom(client);
   }
 }

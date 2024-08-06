@@ -44,7 +44,7 @@ model DiamondPackage {
   updatedAt DateTime @updatedAt
 
   invoices        Invoice[]
-  DiamondPurchase DiamondPurchase[]
+  diamondPurchase DiamondPurchase[]
 }
 
 model Invoice {
@@ -62,7 +62,9 @@ model Invoice {
 model Avatar {
   id        Int     @id @default(autoincrement())
   image     String
+  price     Int?
   isPremium Boolean
+  diamond  Int? 
 
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
