@@ -1,8 +1,19 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+
+export class UserAvatarDTO {
+  @IsString()
+  image: string;
+}
+
+export class AvatarDTO {
+  @IsOptional()
+  avatar?: UserAvatarDTO;
+}
 
 export class CreateUserDto {
   @IsNumber()
   id: number;
+
   @IsString()
   username: string;
 

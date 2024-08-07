@@ -142,6 +142,9 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Invoice_orderId_key" ON "Invoice"("orderId");
+
 -- AddForeignKey
 ALTER TABLE "DiamondPurchase" ADD CONSTRAINT "DiamondPurchase_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
