@@ -49,6 +49,7 @@ model DiamondPackage {
 
 model Invoice {
   id               Int            @id @default(autoincrement())
+  orderId          String         @unique
   status           String
   amount           Int
   createdAt        DateTime       @default(now())
