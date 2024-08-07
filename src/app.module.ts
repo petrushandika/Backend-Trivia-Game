@@ -17,6 +17,8 @@ import { PrismaService } from './prisma/prisma.service';
 import { GoogleController } from './google/google.controller';
 import { GoogleStrategy } from './google/google.strategy';
 import { GoogleService } from './google/google.service';
+import { SocketGateway } from './socket/socket.gateway';
+import { SocketService } from './socket/socket.service';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { GoogleService } from './google/google.service';
     PrismaService,
     GoogleStrategy,
     GoogleService,
+    SocketGateway,
+    SocketService,
   ],
 })
 export class AppModule implements NestModule {

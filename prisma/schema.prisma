@@ -65,7 +65,7 @@ model Avatar {
   image     String
   price     Int?
   isPremium Boolean
-  diamond  Int? 
+  diamond   Int?
 
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
@@ -116,7 +116,7 @@ model Question {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  answer    Answer[] 
+  answer    Answer[]
 }
 
 model Answer {
@@ -128,13 +128,13 @@ model Answer {
 
   questionId Int
   question   Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  userAnswer UserAnswer[] 
+  userAnswer UserAnswer[]
 }
 
 model UserAnswer {
   id         Int      @id @default(autoincrement())
   isCorrect  Boolean
-  score      Int      @default(1000)
+  score      Int      @default(0)
   answerTime Int      @default(30)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

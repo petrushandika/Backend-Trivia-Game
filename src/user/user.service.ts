@@ -57,6 +57,7 @@ export class UserService {
       return await this.prismaService.user.findUnique({
         where: { id: id },
         select: {
+          id: true,
           diamond: true,
           email: true,
           username: true,

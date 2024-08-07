@@ -1,68 +1,78 @@
 import { Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { PlayerDto } from './dto/player.dto';
+import { RoomDto } from './dto/room.dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SocketService {
-  private rooms: Map<string, string[]> = new Map();
-  private queue: string[] = [];
+  private rooms: RoomDto[] = [];
 
-  getAvailableRoomId(): string | null {
-    for (const [roomId, clients] of this.rooms.entries()) {
-      if (clients.length < 5) {
-        return roomId;
-      }
-    }
-    return null;
+  constructor(private readonly userService: UserService) {}
+
+  findRoomByPlayerId(clientId: string): RoomDto {
+    return this.rooms.find((room) =>
+      room.players.some((player) => player.clientId === clientId),
+    );
   }
 
-  leaveRoom(client: Socket): void {
-    for (const [roomId, clients] of this.rooms.entries()) {
-      const index = clients.indexOf(client.id);
-      if (index !== -1) {
-        clients.splice(index, 1);
-        client.leave(roomId);
-        if (clients.length === 0) {
-          this.rooms.delete(roomId);
-        }
-        break;
-      }
+  findOrCreateRoom(): RoomDto {
+    let room = this.rooms.find((r) => r.players.length < 5);
+
+    if (!room) {
+      room = { id: `room-${this.rooms.length + 1}`, players: [] };
+      this.rooms.push(room);
     }
 
-    const queueIndex = this.queue.indexOf(client.id);
-    if (queueIndex !== -1) {
-      this.queue.splice(queueIndex, 1);
+    return room;
+  }
+
+  async addPlayerToRoom(
+    id: number,
+    clientId: string,
+  ): Promise<PlayerDto | null> {
+    const user = await this.userService.findOne(id);
+
+    if (!user) {
+      console.log('User not found');
+      return null;
+    }
+
+    const newPlayer: PlayerDto = {
+      id: user.id,
+      username: user.username,
+      avatar: user.userAvatar[0].avatar,
+      clientId: clientId,
+    };
+
+    return newPlayer;
+  }
+
+  removePlayerFromRoom(clientId: string): void {
+    const playerRoom = this.findRoomByPlayerId(clientId);
+
+    if (playerRoom) {
+      playerRoom.players = playerRoom.players.filter(
+        (player) => player.clientId !== clientId,
+      );
+
+      if (playerRoom.players.length === 0) {
+        this.rooms = this.rooms.filter((room) => room.id !== playerRoom.id);
+      }
     }
   }
 
-  addToQueue(clientId: string): void {
-    if (!this.queue.includes(clientId)) {
-      this.queue.push(clientId);
+  isRoomFull(room: RoomDto): boolean {
+    return room.players.length === 5;
+  }
+
+  updateRoom(roomId: string, updatedPlayers: PlayerDto[]): void {
+    const room = this.rooms.find((r) => r.id === roomId);
+    if (room) {
+      room.players = updatedPlayers;
     }
   }
 
-  processQueue(server: any): void {
-    while (this.queue.length > 0) {
-      let roomId = this.getAvailableRoomId();
-      if (!roomId) {
-        roomId = this.queue.shift();
-        this.rooms.set(roomId, []);
-      }
-
-      const nextClientId = this.queue.shift();
-      const nextClient = server.sockets.sockets.get(nextClientId);
-
-      if (nextClient) {
-        nextClient.join(roomId);
-        this.rooms.get(roomId).push(nextClient.id);
-
-        server.to(roomId).emit('matchFound', { roomId, userId: nextClient.id });
-
-        if (this.rooms.get(roomId).length === 5) {
-          server.to(roomId).emit('roomFull', roomId);
-        }
-      } else {
-        this.queue.push(roomId);
-      }
-    }
+  getRooms(): RoomDto[] {
+    return this.rooms;
   }
 }
