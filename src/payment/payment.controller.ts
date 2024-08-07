@@ -6,6 +6,7 @@ import {
   HttpStatus,
   HttpException,
   Req,
+  Get,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { PaymentService } from './payment.service';
@@ -31,10 +32,12 @@ export class PaymentController {
     }
   }
 
-  @Post('finish')
+  @Get('finish')
   async finish(@Req() req: Request, @Res() res: Response) {
     try {
+      console.log('req.body', req.body)
       const finishData = req.body;
+      console.log('ini dari finishData', finishData)
       const status = await this.paymentService.handleFinish(finishData);
       res.status(HttpStatus.OK).json(status);
     } catch (error) {
@@ -42,6 +45,22 @@ export class PaymentController {
         message: 'Failed to process finish',
         error: error.message,
       });
+    }
+  }
+
+  @Post('notification')
+  async notification(@Req() req: Request, @Res() res: Response, @Body() body: any) {
+    try {
+      console.log('console notification', req.body);
+      console.log('console noficitaion respon', res);
+      const notification = req.body;
+      const status = await this.paymentService.handleNotification(body);
+      res.status(HttpStatus.OK).json(status);
+    } catch (error) {
+      res.status(HttpStatus.BAD_REQUEST).json({
+        message: 'Failed to process notification',
+        error: error.message        
+      })
     }
   }
 }
