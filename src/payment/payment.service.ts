@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PaymentDto } from './dto/create-payment.dto';
 import { Midtrans } from '@miwone/midtrans-client-typescript';
 import CONFIG from 'src/config/config';
@@ -103,41 +103,105 @@ export class PaymentService {
   }
 
   async handleNotification(notificationData: notificationDto) {
-    // Verifikasi data notifikasi (misalnya memeriksa signature key)
-    // Lakukan hal ini hanya jika Anda mengharapkan notifikasi memiliki data sensitif yang memerlukan verifikasi tambahan.
 
-    const transactionStatus = notificationData.transaction_status;
-    const orderId = notificationData.order_id;
+  //   const snap = new Midtrans.Snap({
+  //     clientKey: CONFIG.MIDTRANS_CLIENT_KEY,
+  //     serverKey: CONFIG.MIDTRANS_SERVER_KEY,
+  //     isProduction: false,
+  //   });
 
-    // Temukan transaksi berdasarkan order_id dan update statusnya
-    await this.prismaService.invoice.update({
-      where: { orderId: orderId },
-      data: { status: transactionStatus },
-    });
+  //   const statusResponse = (await snap.transaction.notification(
+  //     notificationData,
+  //   )) as any;
+  //   console.log(statusResponse);
 
-    // Jika transaksi sukses, tambahkan diamond atau item lain ke akun pengguna
-    if (transactionStatus === 'capture' || transactionStatus === 'settlement') {
-      // Misalnya, tambahkan diamond ke akun pengguna
-      await this.addDiamondsToUser(notificationData);
+  //   const transactionStatus = notificationData.transaction_status;
+  //   const orderId = notificationData.order_id;
+
+  //   const invoice = await this.prismaService.invoice.findUnique({
+  //     where : {orderId: orderId}
+  //   })
+
+  //   if(!invoice){
+  //     throw new Error('Invoice not found');
+  //   }
+
+  //   await this.prismaService.invoice.update({
+  //     where: { orderId: invoice.orderId },
+  //     data: { status: transactionStatus },
+  //   });
+
+  //  const diamondPackage = await this.prismaService.diamondPackage.findUnique({
+  //     where : {id : invoice.diamondPackageId}
+  //   })
+
+  //   if(!diamondPackage){
+  //     throw new Error('Diamond package not found');
+  //   }
+
+  //   if (transactionStatus === 'capture' || transactionStatus === 'settlement') {
+  //     return await this.prismaService.user.update({
+  //         where : {id : invoice.userId},
+  //         data : {diamond : {increment : diamondPackage.quantity}}         
+  //      })
+  //   }
+
+    try {
+      const snap = new Midtrans.Snap({
+        clientKey: CONFIG.MIDTRANS_CLIENT_KEY,
+        serverKey: CONFIG.MIDTRANS_SERVER_KEY,
+        isProduction: false,
+      });
+
+      const statusResponse = (await snap.transaction.notification(
+        notificationData,
+      )) as any;
+      console.log('Midtrans Notification Status:', statusResponse);
+
+      const transactionStatus = statusResponse.transaction_status;
+      const orderId = statusResponse.order_id;
+
+      const invoice = await this.prismaService.invoice.findUnique({
+        where: { orderId: orderId },
+      });
+
+      if (!invoice) {
+        throw new NotFoundException('Invoice not found');
+      }
+
+      await this.prismaService.invoice.update({
+        where: { orderId: invoice.orderId },
+        data: { status: transactionStatus },
+      });
+
+      const diamondPackage = await this.prismaService.diamondPackage.findUnique(
+        {
+          where: { id: invoice.diamondPackageId },
+        },
+      );
+
+      if (!diamondPackage) {
+        throw new NotFoundException('Diamond package not found');
+      }
+
+      if (
+        transactionStatus === 'capture' ||
+        transactionStatus === 'settlement'
+      ) {
+        await this.prismaService.user.update({
+          where: { id: invoice.userId },
+          data: { diamond: { increment: diamondPackage.quantity } },
+        });
+      }
+
+      return { message: 'Notification handled successfully' };
+    } catch (error) {
+      console.error('Error handling Midtrans notification:', error);
+      throw new InternalServerErrorException(
+        'Failed to handle Midtrans notification',
+      );
     }
+
   }
 
-  private async addDiamondsToUser(notificationData: any) {
-    const { order_id, gross_amount, custom_field1 } = notificationData;
-    // Custom field1 dapat digunakan untuk menyimpan user_id atau informasi lain yang diperlukan
-    const userId = custom_field1;
-
-    // Ambil jumlah diamond dari sistem atau tentukan berdasarkan gross_amount
-    const diamondsToAdd = this.calculateDiamonds(gross_amount);
-
-    await this.prismaService.user.update({
-      where: { id: userId },
-      data: { diamond: { increment: diamondsToAdd } },
-    });
-  }
-
-  private calculateDiamonds(grossAmount: number): number {
-    // Logika untuk menentukan jumlah diamond berdasarkan grossAmount
-    return grossAmount / 1000; // Misalnya, 1000 IDR per diamond
-  }
 }
