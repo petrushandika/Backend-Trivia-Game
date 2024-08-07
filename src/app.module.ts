@@ -50,6 +50,7 @@ export class AppModule implements NestModule {
         'user/getUser',
         'user/update-user/:id',
         'user/buy-avatar/:id',
+        'payment/create',
       );
   }
 }

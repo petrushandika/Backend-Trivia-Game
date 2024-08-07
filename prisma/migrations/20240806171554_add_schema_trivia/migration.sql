@@ -38,6 +38,7 @@ CREATE TABLE "DiamondPackage" (
 -- CreateTable
 CREATE TABLE "Invoice" (
     "id" SERIAL NOT NULL,
+    "orderId" TEXT NOT NULL,
     "status" TEXT NOT NULL,
     "amount" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -54,11 +55,7 @@ CREATE TABLE "Avatar" (
     "image" TEXT NOT NULL,
     "price" INTEGER,
     "isPremium" BOOLEAN NOT NULL,
-<<<<<<<< HEAD:prisma/migrations/20240806034304_edit_prisma_schema/migration.sql
     "diamond" INTEGER,
-========
-    "diamond" INTEGER NOT NULL,
->>>>>>>> 68fd0c368f92e52dc2b6b48cd28345f5a2176188:prisma/migrations/20240804185625_add_schema_trivia/migration.sql
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

@@ -18,7 +18,10 @@ export class PaymentController {
   @Post('create')
   async create(@Body() paymentDto: PaymentDto, @Res() res: Response) {
     try {
-      const response = await this.paymentService.create(paymentDto);
+      const user = res.locals.user;
+      console.log('user payment', user)
+      console.log('paymendDto', paymentDto)
+      const response = await this.paymentService.create(paymentDto, +user.id);
       res.status(HttpStatus.OK).json(response);
     } catch (error) {
       throw new HttpException(
