@@ -87,7 +87,7 @@ export class AuthMiddleware implements NestMiddleware {
       const email = ticket.email;
       const user = await this.userService.findOneByEmail(email);
       res.locals.user = user;
-      console.log('user middleware', user);
+      // console.log('user middleware', user);
 
       next();
     } catch (error) {

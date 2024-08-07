@@ -20,8 +20,8 @@ export class PaymentController {
   async create(@Body() paymentDto: PaymentDto, @Res() res: Response) {
     try {
       const user = res.locals.user;
-      console.log('user payment', user)
-      console.log('paymendDto', paymentDto)
+      // console.log('user payment', user)
+      // console.log('paymendDto', paymentDto)
       const response = await this.paymentService.create(paymentDto, +user.id);
       res.status(HttpStatus.OK).json(response);
     } catch (error) {
@@ -35,9 +35,9 @@ export class PaymentController {
   @Get('finish')
   async finish(@Req() req: Request, @Res() res: Response) {
     try {
-      console.log('req.body', req.body)
+      console.log('req.body', req.body);
       const finishData = req.body;
-      console.log('ini dari finishData', finishData)
+      console.log('ini dari finishData', finishData);
       const status = await this.paymentService.handleFinish(finishData);
       res.status(HttpStatus.OK).json(status);
     } catch (error) {
@@ -49,7 +49,11 @@ export class PaymentController {
   }
 
   @Post('notification')
-  async notification(@Req() req: Request, @Res() res: Response, @Body() body: any) {
+  async notification(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: any,
+  ) {
     try {
       console.log('console notification', req.body);
       console.log('console noficitaion respon', res);
@@ -59,8 +63,8 @@ export class PaymentController {
     } catch (error) {
       res.status(HttpStatus.BAD_REQUEST).json({
         message: 'Failed to process notification',
-        error: error.message        
-      })
+        error: error.message,
+      });
     }
   }
 }

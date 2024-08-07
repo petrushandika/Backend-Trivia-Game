@@ -19,6 +19,7 @@ import { GoogleStrategy } from './google/google.strategy';
 import { GoogleService } from './google/google.service';
 import { SocketGateway } from './socket/socket.gateway';
 import { SocketService } from './socket/socket.service';
+// import { RoomModule } from './room/room.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { SocketService } from './socket/socket.service';
     QuestionsModule,
     AnswerModule,
     PaymentModule,
+    // RoomModule,
   ],
   controllers: [AppController, GoogleController],
   providers: [
