@@ -76,7 +76,6 @@ export class UserController {
     try {
       const user = res.locals.user;
       const getUser = await this.userService.findOne(user.id);
-      console.log(user, getUser);
       return res.status(200).json(getUser);
     } catch (error) {
       throw error;
