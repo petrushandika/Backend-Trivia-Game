@@ -22,10 +22,13 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Post('buy-avatar/:id')
-  async buyAvatar(@Param('id') avatarId: number, @Res() res: Response) {
+  @Post('buy-avatar')
+  async buyAvatar(@Body() body :{avatarId: number}, @Res() res: Response) {
     try {
+      const {avatarId} = body
+      console.log('avatarId', avatarId)
       const user = res.locals.user;
+      console.log(user)
       const updatedUser = await this.userService.buyAvatar(user.id, +avatarId);
       return res.status(200).json(updatedUser);
     } catch (error) {
