@@ -4,6 +4,7 @@ import { RoomDto } from './dto/room.dto';
 import { UserService } from 'src/user/user.service';
 import { IPlayer, IRoom } from './types';
 import { Server, Socket } from 'socket.io';
+import { QuestionsService } from 'src/question/question.service';
 
 // @Injectable()
 // export class SocketService {
@@ -86,15 +87,35 @@ import { Server, Socket } from 'socket.io';
 @Injectable()
 export class SocketService {
   private rooms: Record<string, IRoom> = {};
+  private server: Server;
+  private count: number = 0;
+  constructor(private readonly questionService: QuestionsService) {}
 
-  createRoom = (roomId: string) => {
+  setServer(server: Server) {
+    this.server = server;
+  }
+
+  createRoom = async (roomId: string) => {
+    this.count += 1;
+    const questionIds: number[] = [];
+    const total = await this.questionService.findAll();
+
+    while (questionIds.length < 10) {
+      const randomId = Math.ceil(Math.random() * total.length);
+      if (!questionIds.includes(randomId)) {
+        questionIds.push(randomId);
+      }
+    }
+
     if (!this.rooms[roomId]) {
       this.rooms[roomId] = {
         id: roomId,
         players: [],
         currentQuestion: 0,
+        questionIds: questionIds,
       };
     }
+    console.log(this.count);
   };
 
   addPlayerToRoom(roomId, player) {
@@ -113,45 +134,124 @@ export class SocketService {
 
   getAllPlayerIds() {}
 
-  handleMatchmaking(socket: Socket, user) {
-    const availableRoomId = Object.keys(this.rooms).find(
-      (roomId) => this.rooms[roomId].players.length < 4,
+  async handleMatchmaking(socket: Socket, user, server: Server) {
+    let availableRoomId = Object.keys(this.rooms).find(
+      (roomId) => this.rooms[roomId].players.length < 2,
     );
+
+    // check is user already entered a room before
+    const userRoom = Object.keys(this.rooms).find((key) => {
+      const entered = this.rooms[key].players.find(
+        (item) => item.username === user.username,
+      );
+      if (entered) {
+        return key;
+      }
+    });
+
+    if (userRoom) {
+      server.to(userRoom).emit('waiting', this.rooms[userRoom]);
+      await this.startGameIfFull(availableRoomId, server);
+      return;
+    }
 
     const player: IPlayer = {
       ...user,
       id: socket.id,
+      score: 0,
     };
 
     if (!availableRoomId) {
-      const newRoomId = `room_${Math.random().toString(36).substring(7)}`;
-      this.createRoom(newRoomId);
-      return this.handleMatchmaking(socket, user);
+      availableRoomId = `room_${Object.keys(this.rooms).length}`;
+      await this.createRoom(availableRoomId);
     }
-    socket.join(availableRoomId);
+
+    await socket.join(availableRoomId);
     this.addPlayerToRoom(availableRoomId, player);
-    this.startGameIfFull(availableRoomId);
-    return this.rooms[availableRoomId];
+
+    await this.startGameIfFull(availableRoomId, server);
   }
 
-  startGameIfFull(roomId: string) {
+  async startGameIfFull(roomId: string, server: Server) {
     const room = this.rooms[roomId];
-    if (room && room.players.length === 4) {
-      // Implement your own logic to start the game
-      this.startNextQuestion(roomId);
+
+    if (room && room.players.length === 1) {
+      await server.to(roomId).emit('matchFound', roomId);
+    } else {
+      await server.to(roomId).emit('waiting', room);
     }
-    console.log(room);
   }
 
-  startNextQuestion(roomId) {}
+  async startNextQuestion(
+    roomId: string,
+    currentQuestion: number,
+    server: Server,
+  ) {
+    console.log('ROOMs 193', this.rooms);
+    const room = this.rooms[roomId];
 
-  broadcastQuestion(roomId) {}
+    const questionId = room?.questionIds[currentQuestion];
+
+    const question = await this.questionService.findOne(questionId);
+
+    server.to(roomId).emit('questionData', question);
+
+    // await new Promise((resolve) => setTimeout(resolve, 30000));
+
+    // if (room?.currentQuestion < 9) {
+    //   room.currentQuestion = room?.currentQuestion + 1;
+    //   this.startNextQuestion(roomId, server);
+    // } else {
+    // }
+  }
+
+  broadcastQuestion(socket: Socket, roomId: string) {
+    const question = this.getCurrentQuestion(roomId);
+    // socket.emit('questionData', question);
+  }
+
+  getCurrentQuestion(roomId: string) {
+    return {
+      content: 'Testing?',
+      answers: [
+        { content: 'Yes', isCorrect: true },
+        { content: 'No', isCorrect: false },
+        { content: 'Maybe', isCorrect: false },
+      ],
+    };
+  }
+
+  handleTimeUp(roomId: string) {
+    const room = this.rooms[roomId];
+    if (room) {
+      this.server.to(roomId).emit('questionTimeout');
+    }
+  }
+
+  handleAnswer(
+    roomId: string,
+    playerId: string,
+    answer: string,
+    socket: Socket,
+  ) {
+    const room = this.rooms[roomId];
+    if (room) {
+      const player = room.players.find((p) => p.id == playerId);
+      if (player) {
+        const question = this.getCurrentQuestion(roomId);
+        const selectedAnswer = question.answers.find(
+          (a) => a.content === answer,
+        );
+        const isCorrect = selectedAnswer?.isCorrect ?? false;
+        if (isCorrect) {
+          player.score += 1;
+        }
+        socket.emit('answerResult', { isCorrect });
+      }
+    }
+  }
 
   resetPlayerScores(roomId) {}
-
-  handleTimeUp(roomId) {}
-
-  handleAnswer(roomId, playerId, answer) {}
 
   calculateScores(roomId) {}
 

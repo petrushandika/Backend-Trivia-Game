@@ -11,6 +11,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
 import { UserService } from 'src/user/user.service';
+import { QuestionsService } from 'src/question/question.service';
 
 @WebSocketGateway()
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -19,7 +20,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly socketService: SocketService,
     private readonly userService: UserService,
-  ) {}
+    private readonly questionService: QuestionsService,
+  ) {
+    this.socketService.setServer(this.server);
+  }
 
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
@@ -75,18 +79,41 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('JOIN QUEUE ACTIVE');
 
     const user = await this.userService.findOne(data.id);
-    console.log(user);
+    await this.socketService.handleMatchmaking(
+      client,
+      {
+        username: user.username,
+        userAvatar: user.userAvatar,
+      },
+      this.server,
+    );
+  }
 
-    const room = await this.socketService.handleMatchmaking(client, {
-      username: user.username,
-      userAvatar: user.userAvatar,
-    });
+  @SubscribeMessage('requestQuestion')
+  async requestQuestion(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { roomId: string; currentIndex: number },
+  ) {
+    await this.socketService.startNextQuestion(
+      data.roomId,
+      data.currentIndex,
+      this.server,
+    );
+    // const question = await this.questionService.findOne(+data.roomId);
+    // console.log('test', question)
+  }
 
-    this.server.to(room.id).emit('waiting', room);
+  @SubscribeMessage('submitAnswer')
+  async handleAnswer(
+    @MessageBody() data: { roomId: string; answer: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { roomId, answer } = data;
+    this.socketService.handleAnswer(roomId, client.id, answer, client);
   }
 
   @SubscribeMessage('ping')
-  pong(@ConnectedSocket() socrket: Socket): WsResponse<string> {
+  pong(@ConnectedSocket() socket: Socket): WsResponse<string> {
     console.log('pong');
     return { event: 'pong', data: 'pong' };
   }

@@ -15,10 +15,10 @@ import { UpdateAnswerDto } from './dto/update-answer.dto';
 export class AnswerController {
   constructor(private readonly answerService: AnswerService) {}
 
-  @Post()
-  create(@Body() createAnswerDto: CreateAnswerDto) {
-    return this.answerService.create(createAnswerDto);
-  }
+  // @Post()
+  // create(@Body() createAnswerDto: CreateAnswerDto) {
+  //   return this.answerService.create(createAnswerDto);
+  // }
 
   @Get()
   findAll() {
