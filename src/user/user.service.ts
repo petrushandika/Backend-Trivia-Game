@@ -175,7 +175,7 @@ export class UserService {
         throw new NotFoundException('Avatar not found');
       }
 
-      if (avatar.diamond !== null && user.diamond < avatar.diamond) {
+      if (avatar.diamond !== 0 && user.diamond < avatar.diamond) {
         throw new BadRequestException('Not enough diamonds');
       }
 
@@ -183,7 +183,7 @@ export class UserService {
         where: { id: userId },
         data: {
           diamond:
-            avatar.diamond !== null ? { decrement: avatar.diamond } : undefined,
+            avatar.diamond !== 0 ? { decrement: avatar.diamond } : undefined,
           userAvatar: {
             create: {
               avatarId: avatar.id,

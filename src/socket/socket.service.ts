@@ -175,7 +175,7 @@ export class SocketService {
   async startGameIfFull(roomId: string, server: Server) {
     const room = this.rooms[roomId];
 
-    if (room && room.players.length === 1) {
+    if (room && room.players.length === 4) {
       await server.to(roomId).emit('matchFound', roomId);
     } else {
       await server.to(roomId).emit('waiting', room);
