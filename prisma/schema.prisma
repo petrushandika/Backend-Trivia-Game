@@ -63,7 +63,6 @@ model Invoice {
 model Avatar {
   id        Int     @id @default(autoincrement())
   image     String
-  price     Int?
   isPremium Boolean
   diamond   Int?
 
