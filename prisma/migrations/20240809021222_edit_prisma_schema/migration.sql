@@ -53,7 +53,6 @@ CREATE TABLE "Invoice" (
 CREATE TABLE "Avatar" (
     "id" SERIAL NOT NULL,
     "image" TEXT NOT NULL,
-    "price" INTEGER,
     "isPremium" BOOLEAN NOT NULL,
     "diamond" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

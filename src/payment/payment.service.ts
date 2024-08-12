@@ -106,7 +106,7 @@ export class PaymentService {
 
   //   const snap = new Midtrans.Snap({
   //     clientKey: CONFIG.MIDTRANS_CLIENT_KEY,
-  //     serverKey: CONFIG.MIDTRANS_SERVER_KEY,
+  //     serverKey: CONFIG.MIDTRANS_SERVER_KEY,xx
   //     isProduction: false,
   //   });
 

@@ -14,7 +14,7 @@ async function main() {
     {
       id: 6,
       image:
-        'https://cdn3d.iconscout.com/3d/premium/thumb/curly-hair-man-9606398-7766943.png?f=webp',
+        'https://cdn3d.iconscout.com/3d/premium/thumb/short-hair-man-with-bucket-hat-9606384-7766929.png?f=webp',
       diamond: 0,
       isPremium: false,
     },
@@ -56,7 +56,7 @@ async function main() {
     {
       id: 12,
       image:
-        'https://cdn3d.iconscout.com/3d/premium/thumb/short-hair-man-with-bucket-hat-9606384-7766929.png?f=webp',
+        'https://cdn3d.iconscout.com/3d/premium/thumb/curly-hair-man-9606398-7766943.png?f=webp',
       diamond: 0,
       isPremium: false,
     },
@@ -86,6 +86,13 @@ async function main() {
       image:
         'https://cdn3d.iconscout.com/3d/premium/thumb/short-hair-woman-with-vr-9606837-7759125.png?f=webp',
       price: 30,
+      isPremium: false,
+    },
+    {
+      id: 17,
+      image:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2u8MNXCpBqfbMGscoq1LpuYxOcVR2f-BOWSLM4NgC6iIblh8oEuxE8eXgtCU24-ubY9w&usqp=CAU',
+      price: 0,
       isPremium: false,
     },
   ];
