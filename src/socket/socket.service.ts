@@ -136,7 +136,7 @@ export class SocketService {
 
   async handleMatchmaking(socket: Socket, user, server: Server) {
     let availableRoomId = Object.keys(this.rooms).find(
-      (roomId) => this.rooms[roomId].players.length < 2,
+      (roomId) => this.rooms[roomId].players.length < 1,
     );
 
     // check is user already entered a room before
@@ -175,7 +175,7 @@ export class SocketService {
   async startGameIfFull(roomId: string, server: Server) {
     const room = this.rooms[roomId];
 
-    if (room && room.players.length === 2) {
+    if (room && room.players.length === 1) {
       await server.to(roomId).emit('matchFound', roomId);
     } else {
       await server.to(roomId).emit('waiting', room);

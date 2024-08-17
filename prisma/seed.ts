@@ -101,7 +101,7 @@ async function main() {
     {
       id: 221,
       image:
-        'https://res.cloudinary.com/dv8vfur0m/image/upload/v1722826431/d1-removebg-preview_me6qay.png',
+        'https://res.cloudinary.com/dv8vfur0m/image/upload/v1722826431/d2-removebg-preview_j8cgo0.png',
       price: 20000,
       quantity: 100,
     },
@@ -121,7 +121,8 @@ async function main() {
     },
     {
       id: 224,
-      image: 'https://img.freepik.com/premium-vector/vector_863384-155.jpg',
+      image:
+        'https://res.cloudinary.com/dv8vfur0m/image/upload/v1722826432/d6-removebg-preview_i8kijx.png',
       price: 135000,
       quantity: 1000,
     },
@@ -130,7 +131,7 @@ async function main() {
       image:
         'https://res.cloudinary.com/dv8vfur0m/image/upload/v1722826432/d7-removebg-preview_idhc1f.png',
       price: 250000,
-      quantity: 500,
+      quantity: 5000,
     },
     {
       id: 226,
@@ -150,6 +151,7 @@ async function main() {
         { content: 'Paris', isCorrect: true },
         { content: 'London', isCorrect: false },
         { content: 'Berlin', isCorrect: false },
+        { content: 'Madrid', isCorrect: false },
       ],
     },
     {
@@ -161,6 +163,7 @@ async function main() {
         { content: 'Jepang', isCorrect: true },
         { content: 'Cina', isCorrect: false },
         { content: 'Korea Selatan', isCorrect: false },
+        { content: 'Thailand', isCorrect: false },
       ],
     },
     {
@@ -172,6 +175,7 @@ async function main() {
         { content: 'Everest', isCorrect: true },
         { content: 'Kilimanjaro', isCorrect: false },
         { content: 'Fuji', isCorrect: false },
+        { content: 'Denali', isCorrect: false },
       ],
     },
     {
@@ -183,6 +187,7 @@ async function main() {
         { content: 'Laut Mediterania', isCorrect: true },
         { content: 'Laut Karibia', isCorrect: false },
         { content: 'Laut Kaspia', isCorrect: false },
+        { content: 'Laut Hitam', isCorrect: false },
       ],
     },
     {
@@ -194,6 +199,7 @@ async function main() {
         { content: 'Canberra', isCorrect: true },
         { content: 'Sydney', isCorrect: false },
         { content: 'Melbourne', isCorrect: false },
+        { content: 'Brisbane', isCorrect: false },
       ],
     },
     {
@@ -205,6 +211,7 @@ async function main() {
         { content: 'Mesir', isCorrect: true },
         { content: 'Meksiko', isCorrect: false },
         { content: 'Peru', isCorrect: false },
+        { content: 'Sudan', isCorrect: false },
       ],
     },
     {
@@ -216,6 +223,7 @@ async function main() {
         { content: 'J.K. Rowling', isCorrect: true },
         { content: 'J.R.R. Tolkien', isCorrect: false },
         { content: 'George R.R. Martin', isCorrect: false },
+        { content: 'C.S. Lewis', isCorrect: false },
       ],
     },
     {
@@ -227,6 +235,7 @@ async function main() {
         { content: 'Nil', isCorrect: true },
         { content: 'Amazon', isCorrect: false },
         { content: 'Yangtze', isCorrect: false },
+        { content: 'Mississippi', isCorrect: false },
       ],
     },
     {
@@ -238,6 +247,7 @@ async function main() {
         { content: 'Greenland', isCorrect: true },
         { content: 'New Guinea', isCorrect: false },
         { content: 'Borneo', isCorrect: false },
+        { content: 'Madagaskar', isCorrect: false },
       ],
     },
     {
@@ -249,6 +259,7 @@ async function main() {
         { content: 'Burj Khalifa', isCorrect: true },
         { content: 'Shanghai Tower', isCorrect: false },
         { content: 'Abraj Al-Bait', isCorrect: false },
+        { content: 'One World Trade Center', isCorrect: false },
       ],
     },
   ];
